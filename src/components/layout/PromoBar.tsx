@@ -1,8 +1,8 @@
 const messages = [
-  'Free shipping on orders over $35',
-  '30-day happiness guarantee',
+  'Free shipping on orders above ₹499',
+  '50 kcal · 5g protein · zero added sugar',
   'New: Coffee Caramel is here',
-  'Subscribe & save up to 24%',
+  'Starter Trial Pack — 5 Bites at ₹199',
 ];
 
 export function PromoBar() {

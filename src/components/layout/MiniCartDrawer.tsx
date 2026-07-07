@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Minus, Plus, X } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { findProduct } from '../../data/products';
-import { BiteMockup } from '../illustrations/BiteMockup';
+import { PouchMockup } from '../illustrations/PouchMockup';
 
 export function MiniCartDrawer() {
   const { lines, isDrawerOpen, closeDrawer, setQty, subtotal, removeFromCart } = useCart();
@@ -48,14 +48,14 @@ export function MiniCartDrawer() {
                     if (!product) return null;
                     return (
                       <li key={line.productId} className="flex gap-3 rounded-2xl bg-white/60 p-3 shadow-soft">
-                        <div className="h-16 w-16 shrink-0">
-                          <BiteMockup theme={product.theme} />
+                        <div className="h-20 w-14 shrink-0">
+                          <PouchMockup theme={product.theme} flavor={product.name.replace(/ Bite$/, '')} showBites={false} />
                         </div>
                         <div className="flex flex-1 flex-col justify-between">
                           <div className="flex items-start justify-between gap-2">
                             <div>
                               <p className="text-sm font-bold text-cocoa-700">{product.name}</p>
-                              <p className="text-xs text-cocoa-400">${product.price.toFixed(2)} each</p>
+                              <p className="text-xs text-cocoa-400">₹{product.price} each</p>
                             </div>
                             <button
                               onClick={() => removeFromCart(line.productId)}
@@ -92,7 +92,7 @@ export function MiniCartDrawer() {
               <div className="border-t border-cocoa-600/10 p-5">
                 <div className="mb-4 flex items-center justify-between text-sm">
                   <span className="text-cocoa-500">Subtotal</span>
-                  <span className="font-display text-lg font-bold text-cocoa-700">${subtotal.toFixed(2)}</span>
+                  <span className="font-display text-lg font-bold text-cocoa-700">₹{Math.round(subtotal)}</span>
                 </div>
                 <Link to="/cart" onClick={closeDrawer}>
                   <button className="btn-primary w-full">View Bag & Checkout</button>

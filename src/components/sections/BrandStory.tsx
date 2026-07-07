@@ -24,18 +24,19 @@ export function BrandStory() {
 
         <Reveal delay={0.15} className="space-y-5 text-lg leading-relaxed text-cream-200/80">
           <p>
-            The idea started from a simple moment — wanting something sweet after a meal
-            without eating an entire protein bar. Every option felt like overkill: 200
-            calories, a brick-sized bar, more than what the craving actually asked for.
+            Our founder, Mansi, kept reaching for a protein bar after meals to satisfy a
+            sweet craving — and kept realizing halfway through that she didn't actually
+            want an entire bar. She wanted two or three bites of something sweet, not 200
+            calories of it.
           </p>
           <p>
-            So we went the other way. We stripped a protein bar down to the one bite that
-            actually satisfies the craving — rich chocolate, real protein, gone in under a
-            minute — and left everything else out.
+            So instead of building a smaller protein bar, she built a new category — a
+            portion-controlled protein treat sized for the craving itself, made to replace
+            dessert after lunch or dinner, not a meal.
           </p>
           <p className="font-display text-xl font-semibold text-gold-500">
-            The result: the perfect mini bite. Dessert-level satisfaction, 30-40 calories,
-            zero guilt.
+            The result: a small protein bite made for dessert cravings — 50 calories, 5g
+            protein, zero added sugar.
           </p>
         </Reveal>
       </div>

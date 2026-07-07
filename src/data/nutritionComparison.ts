@@ -8,10 +8,10 @@ export interface ComparisonRow {
 }
 
 export const comparisonRows: ComparisonRow[] = [
-  { label: 'Calories', unit: 'kcal', betterbite: 35, chocolate: 150, proteinBar: 220, max: 220 },
-  { label: 'Protein', unit: 'g', betterbite: 4, chocolate: 1, proteinBar: 20, max: 20 },
-  { label: 'Sugar', unit: 'g', betterbite: 1, chocolate: 14, proteinBar: 6, max: 14 },
-  { label: 'Portion size', unit: 'g', betterbite: 12, chocolate: 45, proteinBar: 60, max: 60 },
+  { label: 'Calories', unit: 'kcal', betterbite: 50, chocolate: 150, proteinBar: 220, max: 220 },
+  { label: 'Protein', unit: 'g', betterbite: 5, chocolate: 1, proteinBar: 18, max: 18 },
+  { label: 'Added Sugar', unit: 'g', betterbite: 0, chocolate: 14, proteinBar: 6, max: 14 },
+  { label: 'Portion size', unit: 'g', betterbite: 14, chocolate: 45, proteinBar: 60, max: 60 },
 ];
 
 export const comparisonColumns = [

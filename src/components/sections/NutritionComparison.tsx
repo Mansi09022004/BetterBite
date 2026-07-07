@@ -9,8 +9,8 @@ export function NutritionComparison() {
       <div className="container-page">
         <SectionHeading
           eyebrow="The Numbers"
-          title="Same craving, radically different math"
-          subtitle="Here's how one BetterBite Bite stacks up against a normal chocolate bar and a standard protein bar."
+          title="Same craving, smarter portion."
+          subtitle="Here's how one BetterBite stacks up against a normal chocolate bar and a standard protein bar."
         />
 
         <div className="mt-14 flex flex-wrap justify-center gap-3">

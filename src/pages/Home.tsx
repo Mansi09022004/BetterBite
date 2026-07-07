@@ -15,10 +15,10 @@ export default function Home() {
   return (
     <>
       <Helmet>
-        <title>BetterBite — Your 40 Calorie Sweet Escape</title>
+        <title>BetterBite — Your 50 Calorie Sweet Escape</title>
         <meta
           name="description"
-          content="Mini protein bites at 30-40 calories each. Real dessert flavor, real protein, zero guilt. Shop 5 flavors or subscribe & save."
+          content="Mini protein bites at 50 calories each — 5g protein, zero added sugar. Shop 5 flavors or build your BetterBite Box."
         />
       </Helmet>
       <Hero />

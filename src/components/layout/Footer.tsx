@@ -13,7 +13,7 @@ export function Footer() {
             BetterBite
           </Link>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-cream-200/70">
-            Mini protein bites, 30-40 calories each. Real dessert flavor, real protein, none of the guilt.
+            Mini protein bites, 50 calories each. Real dessert flavor, real protein, zero added sugar.
           </p>
           <div className="mt-5 flex gap-3">
             {[Instagram, Facebook, Twitter].map((Icon, i) => (

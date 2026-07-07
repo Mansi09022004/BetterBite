@@ -32,7 +32,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       )}
 
       <div className="mx-auto h-48 w-36 pt-2">
-        <PouchMockup theme={product.theme} showBites />
+        <PouchMockup theme={product.theme} flavor={product.name.replace(/ Bite$/, '')} showBites />
       </div>
 
       <div className="mt-4 flex flex-1 flex-col">
@@ -52,25 +52,38 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           </div>
           <div className="rounded-xl bg-cocoa-600/[0.05] py-2">
             <span className="font-display text-sm font-bold text-cocoa-700">{product.sugar}g</span>
-            <span className="block text-[10px] uppercase text-cocoa-400">sugar</span>
+            <span className="block text-[10px] uppercase text-cocoa-400">added sugar</span>
           </div>
         </div>
 
-        <div className="mt-5 flex items-center justify-between">
-          <div className="flex items-baseline gap-2">
-            <span className="font-display text-xl font-bold text-cocoa-700">${product.price.toFixed(2)}</span>
-            {product.compareAtPrice && (
-              <span className="text-sm text-cocoa-400 line-through">${product.compareAtPrice.toFixed(2)}</span>
-            )}
+        <div className="mt-5 flex flex-1 flex-col justify-end gap-3">
+          <div>
+            <div className="flex items-baseline gap-2">
+              <span className="font-display text-xl font-bold text-cocoa-700">₹{product.price}</span>
+              {product.compareAtPrice && (
+                <span className="text-sm text-cocoa-400 line-through">₹{product.compareAtPrice}</span>
+              )}
+            </div>
+            <p className="mt-0.5 text-xs text-cocoa-400">
+              10 protein bites • ₹{Math.round(product.price / 10)} per bite
+            </p>
           </div>
           <button
             onClick={handleAdd}
-            className={`flex h-11 w-11 items-center justify-center rounded-full transition-all duration-300 ${
+            className={`btn w-full !py-2.5 text-sm transition-all duration-300 ${
               added ? 'bg-gold-500 text-cocoa-800' : 'bg-cocoa-600 text-cream-100 hover:bg-cocoa-700'
             }`}
-            aria-label={`Add ${product.name} to cart`}
+            aria-label={`Add ${product.name} box to cart`}
           >
-            {added ? <Check className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
+            {added ? (
+              <>
+                <Check className="h-4 w-4" /> Added
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4" /> Add Box
+              </>
+            )}
           </button>
         </div>
       </div>

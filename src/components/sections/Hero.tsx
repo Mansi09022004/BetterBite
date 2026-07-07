@@ -8,7 +8,7 @@ import { StatPill } from '../ui/StatPill';
 import { useCountUp } from '../../hooks/useCountUp';
 
 export function Hero() {
-  const { ref, display } = useCountUp(40, 1.4);
+  const { ref, display } = useCountUp(50, 1.4);
 
   return (
     <section className="relative overflow-hidden pb-20 pt-10 sm:pt-16">
@@ -24,7 +24,7 @@ export function Hero() {
             className="eyebrow"
           >
             <Sparkles className="h-3.5 w-3.5 text-gold-700" />
-            30-40 Calories · Real Protein
+            50 Calories · 5g Protein
           </motion.span>
 
           <motion.h1
@@ -48,7 +48,8 @@ export function Hero() {
             className="mt-6 max-w-md text-lg leading-relaxed text-cocoa-500"
           >
             Protein. Pleasure. No guilt. Mini protein bites made for the moment after
-            lunch or dinner when you want something sweet — without wrecking your goals.
+            lunch or dinner when you want something sweet — without eating an entire
+            protein bar.
           </motion.p>
 
           <motion.div
@@ -60,7 +61,7 @@ export function Hero() {
             <a href="#shop">
               <button className="btn-primary">Shop Now</button>
             </a>
-            <Link to="/subscribe">
+            <Link to="/subscribe?plan=starter">
               <button className="btn-secondary">Try Starter Pack</button>
             </Link>
           </motion.div>
@@ -71,9 +72,9 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.4 }}
             className="mt-10 grid max-w-md grid-cols-3 gap-3"
           >
-            <StatPill label="Calories" value="30-40" />
-            <StatPill label="Protein" value="4-5g" />
-            <StatPill label="Added Sugar" value="~1g" />
+            <StatPill label="Calories" value="50" />
+            <StatPill label="Protein" value="5g" />
+            <StatPill label="Added Sugar" value="0g" />
           </motion.div>
         </div>
 
@@ -85,7 +86,7 @@ export function Hero() {
             className="relative w-56 sm:w-64 lg:w-72"
           >
             <div className="animate-float">
-              <PouchMockup theme="chocolate" />
+              <PouchMockup theme="chocolate" flavor="Chocolate Fudge" />
             </div>
           </motion.div>
 

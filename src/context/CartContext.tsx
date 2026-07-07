@@ -15,15 +15,12 @@ type CartAction =
   | { type: 'ADD'; productId: string; qty?: number }
   | { type: 'REMOVE'; productId: string }
   | { type: 'SET_QTY'; productId: string; qty: number }
-  | { type: 'CLEAR' }
-  | { type: 'HYDRATE'; lines: CartLine[] };
+  | { type: 'CLEAR' };
 
 const STORAGE_KEY = 'betterbite-cart-v1';
 
 function reducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
-    case 'HYDRATE':
-      return { lines: action.lines };
     case 'ADD': {
       const existing = state.lines.find((l) => l.productId === action.productId);
       if (existing) {
@@ -72,24 +69,24 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
+function loadPersistedCart(): { lines: CartLine[]; couponCode: string | null } {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as { lines: CartLine[]; couponCode: string | null };
+      return { lines: parsed.lines ?? [], couponCode: parsed.couponCode ?? null };
+    }
+  } catch {
+    // ignore corrupt storage
+  }
+  return { lines: [], couponCode: null };
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, { lines: [] });
-  const [couponCode, setCouponCode] = useState<string | null>(null);
+  const [state, dispatch] = useReducer(reducer, undefined, () => ({ lines: loadPersistedCart().lines }));
+  const [couponCode, setCouponCode] = useState<string | null>(() => loadPersistedCart().couponCode);
   const [couponError, setCouponError] = useState<string | null>(null);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as { lines: CartLine[]; couponCode: string | null };
-        dispatch({ type: 'HYDRATE', lines: parsed.lines ?? [] });
-        if (parsed.couponCode) setCouponCode(parsed.couponCode);
-      }
-    } catch {
-      // ignore corrupt storage
-    }
-  }, []);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ lines: state.lines, couponCode }));

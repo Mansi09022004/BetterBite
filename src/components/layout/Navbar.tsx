@@ -50,7 +50,7 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          <NavLink to="/subscribe" className="hidden lg:inline-flex">
+          <NavLink to="/subscribe?plan=starter" className="hidden lg:inline-flex">
             <button className="btn-secondary !py-2.5 !px-5 text-sm">Try Starter Pack</button>
           </NavLink>
           <button
@@ -108,7 +108,7 @@ export function Navbar() {
                   {link.label}
                 </a>
               ))}
-              <NavLink to="/subscribe" onClick={() => setMenuOpen(false)}>
+              <NavLink to="/subscribe?plan=starter" onClick={() => setMenuOpen(false)}>
                 <button className="btn-primary w-full">Try Starter Pack</button>
               </NavLink>
             </motion.div>

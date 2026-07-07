@@ -7,9 +7,9 @@ export interface Faq {
 export const faqs: Faq[] = [
   {
     id: 'f1',
-    question: 'How are BetterBite Bites only 30-40 calories?',
+    question: 'How is each BetterBite only 50 calories?',
     answer:
-      'It comes down to portion engineering, not magic. Each Bite is a concentrated, protein-forward center (whey/milk protein isolate blend) coated in a thin layer of real chocolate — sized at roughly 12g so you get full dessert flavor without the 45-60g portion of a candy bar or protein bar.',
+      'It comes down to portion, not magic. Each Bite is a concentrated, protein-forward center (whey/milk protein isolate blend) coated in a thin layer of real chocolate — sized at roughly 14g so you get full dessert flavor without the 45-60g portion of a candy bar or protein bar.',
   },
   {
     id: 'f2',
@@ -31,9 +31,9 @@ export const faqs: Faq[] = [
   },
   {
     id: 'f5',
-    question: 'How does the Bite Box subscription work?',
+    question: 'How does the BetterBite Box work?',
     answer:
-      'Pick a plan and flavor mix, and a fresh box ships every 30 days. You can swap flavors, change frequency, skip a month, or cancel anytime from your account — no phone calls required.',
+      'Pick a Starter Trial Pack or Box of 10 for a one-time order, or choose the Monthly Bite Box to have it delivered every 30 days automatically. You can swap flavors or cancel the monthly plan anytime — no phone calls required.',
   },
   {
     id: 'f6',

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Minus, Plus, Tag, Trash2, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { findProduct } from '../data/products';
-import { BiteMockup } from '../components/illustrations/BiteMockup';
+import { PouchMockup } from '../components/illustrations/PouchMockup';
 import { Reveal } from '../components/ui/Reveal';
 
 export default function Cart() {
@@ -22,7 +22,7 @@ export default function Cart() {
     setTimeout(() => setShake(false), 400);
   };
 
-  const shipping = subtotal > 0 && subtotal < 35 ? 4.99 : 0;
+  const shipping = subtotal > 0 && subtotal < 499 ? 49 : 0;
   const grandTotal = total + shipping;
 
   return (
@@ -52,15 +52,15 @@ export default function Cart() {
                   key={line.productId}
                   className="flex gap-4 rounded-3xl bg-white/70 p-4 shadow-soft ring-1 ring-cocoa-600/[0.05] sm:p-5"
                 >
-                  <div className="h-20 w-20 shrink-0 sm:h-24 sm:w-24">
-                    <BiteMockup theme={product.theme} />
+                  <div className="h-24 w-16 shrink-0 sm:h-28 sm:w-20">
+                    <PouchMockup theme={product.theme} flavor={product.name.replace(/ Bite$/, '')} showBites={false} />
                   </div>
                   <div className="flex flex-1 flex-col justify-between gap-2">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-display font-bold text-cocoa-700">{product.name}</p>
                         <p className="text-xs text-cocoa-400">
-                          {product.kcal} kcal · {product.protein}g protein · {product.sugar}g sugar
+                          {product.kcal} kcal · {product.protein}g protein · {product.sugar}g added sugar
                         </p>
                       </div>
                       <button
@@ -88,7 +88,7 @@ export default function Cart() {
                         </button>
                       </div>
                       <span className="font-display font-bold text-cocoa-700">
-                        ${(product.price * line.qty).toFixed(2)}
+                        ₹{Math.round(product.price * line.qty)}
                       </span>
                     </div>
                   </div>
@@ -134,21 +134,21 @@ export default function Cart() {
             <div className="mt-6 space-y-2.5 border-t border-cocoa-600/10 pt-5 text-sm">
               <div className="flex justify-between text-cocoa-500">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>₹{Math.round(subtotal)}</span>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-gold-700">
                   <span>Discount</span>
-                  <span>-${discount.toFixed(2)}</span>
+                  <span>-₹{Math.round(discount)}</span>
                 </div>
               )}
               <div className="flex justify-between text-cocoa-500">
                 <span>Shipping</span>
-                <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                <span>{shipping === 0 ? 'Free' : `₹${shipping}`}</span>
               </div>
               <div className="flex justify-between border-t border-cocoa-600/10 pt-3 font-display text-lg font-bold text-cocoa-700">
                 <span>Total</span>
-                <span>${grandTotal.toFixed(2)}</span>
+                <span>₹{Math.round(grandTotal)}</span>
               </div>
             </div>
 

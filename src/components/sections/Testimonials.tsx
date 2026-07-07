@@ -7,9 +7,9 @@ export function Testimonials() {
   return (
     <section className="container-page py-20 sm:py-28">
       <SectionHeading
-        eyebrow="Loved By Thousands"
-        title="Real people, real cravings, real results"
-        subtitle="From first-time buyers to sponsored athletes — here's what people say after they make the switch."
+        eyebrow="Customer Reviews"
+        title="Built for everyday cravings"
+        subtitle="Real feedback from people who added BetterBite to their after-meal routine."
       />
 
       <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

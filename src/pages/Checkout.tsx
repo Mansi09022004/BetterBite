@@ -22,7 +22,7 @@ export default function Checkout() {
   const [method, setMethod] = useState<PaymentMethod>('card');
   const [shipping, setShipping] = useState({ name: '', address: '', city: '', zip: '', email: '' });
 
-  const shippingCost = subtotal > 0 && subtotal < 35 ? 4.99 : 0;
+  const shippingCost = subtotal > 0 && subtotal < 499 ? 49 : 0;
   const grandTotal = total + shippingCost;
   const currentIndex = steps.findIndex((s) => s.id === step);
 
@@ -265,7 +265,7 @@ export default function Checkout() {
                           return p ? (
                             <li key={l.productId} className="flex justify-between">
                               <span>{p.name} × {l.qty}</span>
-                              <span>${(p.price * l.qty).toFixed(2)}</span>
+                              <span>₹{Math.round(p.price * l.qty)}</span>
                             </li>
                           ) : null;
                         })}
@@ -277,7 +277,7 @@ export default function Checkout() {
                       Back
                     </button>
                     <button onClick={handlePlaceOrder} className="btn-primary flex-1">
-                      Place Order · ${grandTotal.toFixed(2)}
+                      Place Order · ₹{Math.round(grandTotal)}
                     </button>
                   </div>
                 </motion.div>
@@ -292,7 +292,7 @@ export default function Checkout() {
                   return p ? (
                     <li key={l.productId} className="flex justify-between">
                       <span>{p.name} × {l.qty}</span>
-                      <span>${(p.price * l.qty).toFixed(2)}</span>
+                      <span>₹{Math.round(p.price * l.qty)}</span>
                     </li>
                   ) : null;
                 })}
@@ -300,21 +300,21 @@ export default function Checkout() {
               <div className="mt-4 space-y-2 border-t border-cocoa-600/10 pt-4 text-sm">
                 <div className="flex justify-between text-cocoa-500">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>₹{Math.round(subtotal)}</span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-gold-700">
                     <span>Discount {couponCode && `(${couponCode})`}</span>
-                    <span>-${discount.toFixed(2)}</span>
+                    <span>-₹{Math.round(discount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-cocoa-500">
                   <span>Shipping</span>
-                  <span>{shippingCost === 0 ? 'Free' : `$${shippingCost.toFixed(2)}`}</span>
+                  <span>{shippingCost === 0 ? 'Free' : `₹${shippingCost}`}</span>
                 </div>
                 <div className="flex justify-between border-t border-cocoa-600/10 pt-3 font-display text-lg font-bold text-cocoa-700">
                   <span>Total</span>
-                  <span>${grandTotal.toFixed(2)}</span>
+                  <span>₹{Math.round(grandTotal)}</span>
                 </div>
               </div>
             </div>

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import { Check, Sparkles } from 'lucide-react';
 import { subscriptionPlans } from '../data/subscriptionPlans';
 import { products } from '../data/products';
@@ -10,12 +11,15 @@ import { Reveal } from '../components/ui/Reveal';
 import { useCart } from '../context/CartContext';
 
 export default function Subscription() {
-  const [selectedPlan, setSelectedPlan] = useState(subscriptionPlans[1].id);
+  const [searchParams] = useSearchParams();
+  const requestedPlan = searchParams.get('plan');
+  const defaultPlan = subscriptionPlans.find((p) => p.id === requestedPlan) ?? subscriptionPlans[1];
+  const [selectedPlan, setSelectedPlan] = useState(defaultPlan.id);
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([products[0].id]);
   const { addToCart, openDrawer } = useCart();
 
   const plan = subscriptionPlans.find((p) => p.id === selectedPlan)!;
-  const maxFlavors = plan.id === 'starter' ? 1 : plan.id === 'classic' ? 3 : 5;
+  const maxFlavors = plan.id === 'starter' ? 1 : plan.id === 'main' ? 3 : 5;
 
   const savings = useMemo(() => plan.compareAtPrice - plan.pricePerBox, [plan]);
 
@@ -36,15 +40,15 @@ export default function Subscription() {
   return (
     <div className="min-h-[70vh] py-14 sm:py-20">
       <Helmet>
-        <title>Bite Box Subscription — BetterBite</title>
-        <meta name="description" content="Subscribe to a monthly Bite Box and save up to 24% on your favorite protein bites." />
+        <title>Build Your BetterBite Box — BetterBite</title>
+        <meta name="description" content="Choose your favourite flavours and create your BetterBite box. Trial packs, one-time boxes, and a monthly subscription — cancel anytime." />
       </Helmet>
 
       <div className="container-page">
         <SectionHeading
-          eyebrow="Bite Box Subscription"
-          title="Build your monthly Bite Box"
-          subtitle="Choose a plan, pick your flavors, and never run out of your sweet escape. Skip, swap, or cancel anytime."
+          eyebrow="BetterBite Box"
+          title="Build Your BetterBite Box"
+          subtitle="Choose your favourite flavours and create your protein bite box. Cancel anytime."
         />
 
         <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -60,7 +64,7 @@ export default function Subscription() {
               >
                 {p.best && (
                   <span className="absolute -top-3 right-6 flex items-center gap-1 rounded-full bg-gold-500 px-3 py-1 text-[11px] font-bold uppercase text-cocoa-800">
-                    <Sparkles className="h-3 w-3" /> Best Value
+                    <Sparkles className="h-3 w-3" /> Most Popular
                   </span>
                 )}
                 <h3 className="font-display text-xl font-bold">{p.name}</h3>
@@ -69,10 +73,12 @@ export default function Subscription() {
                 </p>
 
                 <div className="mt-5 flex items-baseline gap-2">
-                  <span className="font-display text-3xl font-extrabold">${p.pricePerBox}</span>
-                  <span className={`text-sm line-through ${selectedPlan === p.id ? 'text-cream-200/60' : 'text-cocoa-400'}`}>
-                    ${p.compareAtPrice}
-                  </span>
+                  <span className="font-display text-3xl font-extrabold">₹{p.pricePerBox}</span>
+                  {p.compareAtPrice > p.pricePerBox && (
+                    <span className={`text-sm line-through ${selectedPlan === p.id ? 'text-cream-200/60' : 'text-cocoa-400'}`}>
+                      ₹{p.compareAtPrice}
+                    </span>
+                  )}
                 </div>
 
                 <ul className="mt-5 flex flex-col gap-2 text-sm">
@@ -91,11 +97,13 @@ export default function Subscription() {
         <Reveal delay={0.2} className="mx-auto mt-14 max-w-3xl rounded-3xl bg-white/70 p-6 shadow-soft ring-1 ring-cocoa-600/[0.05] sm:p-8">
           <div className="flex items-center justify-between">
             <h3 className="font-display text-lg font-bold text-cocoa-700">
-              Pick your flavors <span className="text-cocoa-400">({selectedFlavors.length}/{maxFlavors})</span>
+              Pick your flavours <span className="text-cocoa-400">({selectedFlavors.length}/{maxFlavors})</span>
             </h3>
-            <span className="rounded-full bg-gold-100 px-3 py-1 text-xs font-bold text-gold-700">
-              You save ${savings}/box
-            </span>
+            {savings > 0 && (
+              <span className="rounded-full bg-gold-100 px-3 py-1 text-xs font-bold text-gold-700">
+                You save ₹{savings}
+              </span>
+            )}
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
@@ -124,7 +132,7 @@ export default function Subscription() {
             onClick={handleAdd}
             className="btn-primary mt-8 w-full"
           >
-            Add {plan.name} to Bag — ${plan.pricePerBox}/mo
+            Add {plan.name} to Bag — ₹{plan.pricePerBox}
           </motion.button>
         </Reveal>
       </div>

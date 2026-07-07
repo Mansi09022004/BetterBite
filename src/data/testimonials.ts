@@ -13,43 +13,39 @@ export const testimonials: Testimonial[] = [
     name: 'Maya R.',
     role: 'Verified Buyer',
     quote:
-      "I used to demolish half a chocolate bar after dinner and feel awful about it. Now I have two Bites, get my protein in, and I'm actually satisfied.",
+      'I wanted something sweet after dinner without opening a full chocolate bar. BetterBite fits perfectly.',
     rating: 5,
-    tag: 'Craving control',
   },
   {
     id: 't2',
-    name: 'Coach Dez',
-    role: 'Fitness Coach · 210K followers',
+    name: 'Aditya K.',
+    role: 'Verified Buyer',
     quote:
-      'I recommend BetterBite to every client who says they "can\'t stop snacking at night." Portion-controlled protein that actually tastes like dessert — rare combo.',
+      "Finally something small enough for cravings but still gives me protein. Doesn't feel like I'm cheating on my diet.",
     rating: 5,
-    tag: 'Influencer Partner',
   },
   {
     id: 't3',
-    name: 'Alex T.',
-    role: 'Verified Buyer',
-    quote:
-      'Lost 8lbs over 3 months just from swapping my dessert habit for 2 Bites a night. Didn\'t change anything else. The Peanut Butter Crunch is unreal.',
-    rating: 5,
-    tag: 'Transformation',
-  },
-  {
-    id: 't4',
     name: 'Priya N.',
     role: 'Verified Buyer',
     quote:
-      'Finally a "healthy" snack that doesn\'t taste like cardboard. My kids don\'t even know these are protein bites.',
+      "Love that I don't need to eat an entire protein bar after meals. Two bites and I'm satisfied.",
+    rating: 5,
+  },
+  {
+    id: 't4',
+    name: 'Rohan S.',
+    role: 'Verified Buyer',
+    quote:
+      "Coffee Caramel actually tastes like a treat, not a protein supplement. Tried the Starter Pack out of curiosity and ended up ordering the Monthly Box the same week.",
     rating: 5,
   },
   {
     id: 't5',
-    name: 'Jordan M.',
-    role: 'Powerlifter · Sponsored Athlete',
+    name: 'Ananya D.',
+    role: 'Verified Buyer',
     quote:
-      'Macros are exactly what they say on the pack — I\'ve weighed them myself. That honesty is why I keep a box in my gym bag at all times.',
+      "My go-to after lunch when I want something sweet but don't want to overdo it. Keep a box at my desk.",
     rating: 5,
-    tag: 'Athlete',
   },
 ];
