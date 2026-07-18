@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
 import { PouchMockup } from '../illustrations/PouchMockup';
-import { BiteMockup } from '../illustrations/BiteMockup';
 import { BlobBackground } from '../illustrations/BlobBackground';
 import { StatPill } from '../ui/StatPill';
 import { useCountUp } from '../../hooks/useCountUp';
@@ -11,7 +10,7 @@ export function Hero() {
   const { ref, display } = useCountUp(50, 1.4);
 
   return (
-    <section className="relative overflow-hidden pb-20 pt-10 sm:pt-16">
+    <section className="relative overflow-hidden pb-14 pt-8 sm:pb-20 sm:pt-16">
       <BlobBackground variant="gold" className="-left-40 -top-32 h-[520px] w-[520px]" />
       <BlobBackground variant="beige" className="-right-32 top-40 h-[420px] w-[420px]" />
 
@@ -79,33 +78,68 @@ export function Hero() {
         </div>
 
         <div className="relative z-10 flex justify-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-56 sm:w-64 lg:w-72"
-          >
-            <div className="animate-float">
-              <PouchMockup theme="chocolate" flavor="Chocolate Fudge" />
-            </div>
-          </motion.div>
+          <div className="relative flex flex-col items-center">
+            {/* one shared soft ground shadow beneath the whole lineup */}
+            <div className="absolute bottom-1 left-1/2 h-4 w-52 -translate-x-1/2 rounded-full bg-cocoa-900/20 blur-md sm:h-5 sm:w-64 lg:h-6 lg:w-72" />
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.7 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
-            className="absolute -left-6 top-6 h-20 w-20 animate-floatSlow sm:h-24 sm:w-24"
-          >
-            <BiteMockup theme="strawberry" />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.7 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.65 }}
-            className="absolute -right-2 bottom-10 h-16 w-16 animate-float sm:h-20 sm:w-20"
-          >
-            <BiteMockup theme="peanut" />
-          </motion.div>
+            {/* back row: two flavors, spread wide */}
+            <div className="flex items-end justify-center gap-5 sm:gap-9 lg:gap-11">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.85, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                className="w-16 sm:w-28 lg:w-32"
+              >
+                <div className="rotate-[-4deg]">
+                  <PouchMockup theme="cookies" flavor="Cookies & Cream" showBites={false} />
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.85, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                className="w-16 sm:w-28 lg:w-32"
+              >
+                <div className="rotate-[4deg]">
+                  <PouchMockup theme="strawberry" flavor="Strawberry Cheesecake" showBites={false} />
+                </div>
+              </motion.div>
+            </div>
+
+            {/* front row: three flavors side by side, Chocolate Fudge only slightly bigger */}
+            <div className="-mt-4 flex items-end justify-center -space-x-2 sm:-mt-6 sm:-space-x-4 lg:-mt-7">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.85, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.36, ease: [0.22, 1, 0.36, 1] }}
+                className="w-20 sm:w-32 lg:w-36"
+              >
+                <div className="rotate-[-3deg]">
+                  <PouchMockup theme="peanut" flavor="Peanut Butter Crunch" showBites={false} />
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.46, ease: [0.22, 1, 0.36, 1] }}
+                className="relative z-10 w-24 sm:w-36 lg:w-40"
+              >
+                <div className="animate-float">
+                  <PouchMockup theme="chocolate" flavor="Chocolate Fudge" showBites={false} />
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.85, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.56, ease: [0.22, 1, 0.36, 1] }}
+                className="w-20 sm:w-32 lg:w-36"
+              >
+                <div className="rotate-[3deg]">
+                  <PouchMockup theme="coffee" flavor="Coffee Caramel" showBites={false} />
+                </div>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

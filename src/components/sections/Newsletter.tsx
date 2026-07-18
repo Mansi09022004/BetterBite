@@ -14,8 +14,8 @@ export function Newsletter() {
   };
 
   return (
-    <section className="container-page py-20 sm:py-28">
-      <Reveal className="mx-auto max-w-2xl rounded-3xl bg-cocoa-600 px-6 py-14 text-center sm:px-12">
+    <section className="container-page py-14 sm:py-28">
+      <Reveal className="mx-auto max-w-2xl rounded-3xl bg-cocoa-600 px-5 py-10 text-center sm:px-12 sm:py-14">
         <h2 className="font-display text-2xl font-bold text-cream-100 sm:text-3xl">
           Get 15% off your first box
         </h2>

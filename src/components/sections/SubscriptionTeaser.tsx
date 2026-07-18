@@ -6,8 +6,8 @@ import { products } from '../../data/products';
 
 export function SubscriptionTeaser() {
   return (
-    <section className="container-page py-20 sm:py-28">
-      <div className="relative overflow-hidden rounded-[2.5rem] bg-cocoa-600 px-6 py-14 sm:px-12 sm:py-20">
+    <section className="container-page py-14 sm:py-28">
+      <div className="relative overflow-hidden rounded-[2rem] bg-cocoa-600 px-5 py-10 sm:rounded-[2.5rem] sm:px-12 sm:py-20">
         <div className="pointer-events-none absolute -right-10 -top-10 grid grid-cols-3 gap-4 opacity-20 sm:opacity-30">
           {products.map((p) => (
             <div key={p.id} className="h-16 w-16">

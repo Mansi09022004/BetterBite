@@ -4,7 +4,7 @@ import { ChocolateDrip } from '../illustrations/ChocolateDrip';
 
 export function BrandStory() {
   return (
-    <section id="story" className="relative overflow-hidden bg-cocoa-700 py-24 text-cream-100 sm:py-32">
+    <section id="story" className="relative overflow-hidden bg-cocoa-700 py-16 text-cream-100 sm:py-32">
       <div className="pointer-events-none absolute inset-0 opacity-30">
         <div className="absolute left-10 top-16 h-24 w-24 animate-float opacity-40">
           <BiteMockup theme="chocolate" />

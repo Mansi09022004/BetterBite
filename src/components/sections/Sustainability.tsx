@@ -22,7 +22,7 @@ const points = [
 
 export function Sustainability() {
   return (
-    <section id="sustainability" className="bg-beige-100/60 py-20 sm:py-28">
+    <section id="sustainability" className="bg-beige-100/60 py-14 sm:py-28">
       <div className="container-page">
         <SectionHeading
           eyebrow="Packaging With Purpose"

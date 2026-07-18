@@ -9,7 +9,7 @@ export function FAQ() {
   const [openId, setOpenId] = useState<string | null>(faqs[0]?.id ?? null);
 
   return (
-    <section id="faq" className="bg-beige-100/60 py-20 sm:py-28">
+    <section id="faq" className="bg-beige-100/60 py-14 sm:py-28">
       <div className="container-page">
         <SectionHeading eyebrow="Questions" title="Everything you're wondering about" />
 

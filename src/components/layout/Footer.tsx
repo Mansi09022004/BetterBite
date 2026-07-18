@@ -3,8 +3,8 @@ import { Instagram, Facebook, Twitter } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="bg-cocoa-700 pt-16 text-cream-200">
-      <div className="container-page grid grid-cols-2 gap-10 pb-12 sm:grid-cols-4">
+    <footer className="bg-cocoa-700 pt-10 text-cream-200 sm:pt-16">
+      <div className="container-page grid grid-cols-2 gap-6 pb-8 sm:grid-cols-4 sm:gap-10 sm:pb-12">
         <div className="col-span-2 sm:col-span-1">
           <Link to="/" className="flex items-center gap-2 font-display text-xl font-extrabold text-cream-100">
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-500 text-sm text-cocoa-800">

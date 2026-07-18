@@ -5,7 +5,7 @@ import { Reveal } from '../ui/Reveal';
 
 export function Testimonials() {
   return (
-    <section className="container-page py-20 sm:py-28">
+    <section className="container-page py-14 sm:py-28">
       <SectionHeading
         eyebrow="Customer Reviews"
         title="Built for everyday cravings"

@@ -9,7 +9,7 @@ const gallery = [...products, ...products.slice(0, 3)];
 
 export function InstagramGallery() {
   return (
-    <section className="container-page py-20 sm:py-28">
+    <section className="container-page py-14 sm:py-28">
       <SectionHeading eyebrow="@betterbite" title="Join the community" subtitle="Tag us in your sweet-escape moments for a chance to be featured." />
 
       <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">

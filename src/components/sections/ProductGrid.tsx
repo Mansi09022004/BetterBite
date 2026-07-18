@@ -4,7 +4,7 @@ import { ProductCard } from './ProductCard';
 
 export function ProductGrid() {
   return (
-    <section id="shop" className="container-page py-20 sm:py-28">
+    <section id="shop" className="container-page py-14 sm:py-28">
       <SectionHeading
         eyebrow="Five Flavors"
         title="Pick your sweet escape"

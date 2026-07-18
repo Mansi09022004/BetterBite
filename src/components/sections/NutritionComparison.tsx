@@ -5,7 +5,7 @@ import { Reveal } from '../ui/Reveal';
 
 export function NutritionComparison() {
   return (
-    <section className="bg-beige-100/60 py-20 sm:py-28">
+    <section className="bg-beige-100/60 py-14 sm:py-28">
       <div className="container-page">
         <SectionHeading
           eyebrow="The Numbers"
@@ -37,7 +37,7 @@ export function NutritionComparison() {
                   const pct = Math.max(4, (value / row.max) * 100);
                   return (
                     <div key={col.key} className="flex items-center gap-4">
-                      <span className="w-32 shrink-0 text-xs font-medium text-cocoa-400 sm:w-40 sm:text-sm">
+                      <span className="w-20 shrink-0 text-[11px] font-medium text-cocoa-400 sm:w-40 sm:text-sm">
                         {col.label}
                       </span>
                       <div className="h-3 flex-1 overflow-hidden rounded-full bg-cocoa-600/[0.06]">
