@@ -4,17 +4,18 @@ import { motion } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
 import { Check, Sparkles } from 'lucide-react';
 import { subscriptionPlans } from '../data/subscriptionPlans';
-import { products } from '../data/products';
 import { BiteMockup } from '../components/illustrations/BiteMockup';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { Reveal } from '../components/ui/Reveal';
 import { useCart } from '../context/CartContext';
+import { useProducts } from '../context/ProductsContext';
 
 export default function Subscription() {
   const [searchParams] = useSearchParams();
   const requestedPlan = searchParams.get('plan');
   const defaultPlan = subscriptionPlans.find((p) => p.id === requestedPlan) ?? subscriptionPlans[1];
   const [selectedPlan, setSelectedPlan] = useState(defaultPlan.id);
+  const { products } = useProducts();
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([products[0].id]);
   const { addToCart, openDrawer } = useCart();
 

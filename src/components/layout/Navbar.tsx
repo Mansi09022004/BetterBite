@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, ShoppingBag, X } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { AccountMenu } from './AccountMenu';
 
 const navLinks = [
   { label: 'Shop', href: '/#shop' },
@@ -53,6 +54,7 @@ export function Navbar() {
           <NavLink to="/subscribe?plan=starter" className="hidden lg:inline-flex">
             <button className="btn-secondary !py-2.5 !px-5 text-sm">Try Starter Pack</button>
           </NavLink>
+          <AccountMenu />
           <button
             onClick={openDrawer}
             aria-label="Open cart"

@@ -1,8 +1,9 @@
-import { products } from '../../data/products';
+import { useProducts } from '../../context/ProductsContext';
 import { SectionHeading } from '../ui/SectionHeading';
 import { ProductCard } from './ProductCard';
 
 export function ProductGrid() {
+  const { products } = useProducts();
   return (
     <section id="shop" className="container-page py-14 sm:py-28">
       <SectionHeading

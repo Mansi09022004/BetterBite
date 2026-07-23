@@ -1,30 +1,36 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Check, CreditCard, Landmark, Smartphone, Wallet, PartyPopper } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { PartyPopper } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { findProduct } from '../data/products';
+import { useAuth } from '../context/AuthContext';
+import { useProducts } from '../context/ProductsContext';
+import { useStoreConfig } from '../context/StoreConfigContext';
+import { supabase } from '../lib/supabase';
 
-type Step = 'shipping' | 'payment' | 'review' | 'done';
-type PaymentMethod = 'upi' | 'card' | 'netbanking' | 'wallet' | 'applepay' | 'googlepay';
+declare global {
+  interface Window {
+    Razorpay: new (options: Record<string, unknown>) => { open: () => void };
+  }
+}
 
-const steps: { id: Step; label: string }[] = [
-  { id: 'shipping', label: 'Shipping' },
-  { id: 'payment', label: 'Payment' },
-  { id: 'review', label: 'Review' },
-];
+type Step = 'shipping' | 'done';
 
 export default function Checkout() {
   const { lines, subtotal, discount, total, couponCode, clearCart } = useCart();
+  const { profile } = useAuth();
+  const { findProduct } = useProducts();
+  const { settings } = useStoreConfig();
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>('shipping');
-  const [method, setMethod] = useState<PaymentMethod>('card');
   const [shipping, setShipping] = useState({ name: '', address: '', city: '', zip: '', email: '' });
+  const [placing, setPlacing] = useState(false);
+  const [orderError, setOrderError] = useState<string | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
 
-  const shippingCost = subtotal > 0 && subtotal < 499 ? 49 : 0;
+  const shippingCost = subtotal > 0 && subtotal < settings.freeShippingThreshold ? settings.shippingCharge : 0;
   const grandTotal = total + shippingCost;
-  const currentIndex = steps.findIndex((s) => s.id === step);
 
   if (lines.length === 0 && step !== 'done') {
     return (
@@ -37,9 +43,102 @@ export default function Checkout() {
     );
   }
 
-  const handlePlaceOrder = () => {
-    setStep('done');
-    clearCart();
+  const handlePlaceOrder = async () => {
+    if (placing) return;
+    setOrderError(null);
+
+    if (typeof window.Razorpay !== 'function') {
+      setOrderError('Payment is still loading — please try again in a moment.');
+      return;
+    }
+
+    setPlacing(true);
+
+    try {
+      const orderRes = await fetch('/api/create-razorpay-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lines, couponCode }),
+      });
+      const orderData = await orderRes.json();
+
+      if (!orderRes.ok) {
+        setOrderError(orderData.error || 'Could not start payment. Please try again.');
+        setPlacing(false);
+        return;
+      }
+
+      const razorpay = new window.Razorpay({
+        key: orderData.keyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        order_id: orderData.razorpayOrderId,
+        name: 'BetterBite',
+        description: 'BetterBite order',
+        prefill: {
+          name: shipping.name,
+          email: shipping.email,
+          contact: profile?.phone || '',
+        },
+        theme: { color: '#3B2A22' },
+        handler: async (response: {
+          razorpay_order_id: string;
+          razorpay_payment_id: string;
+          razorpay_signature: string;
+        }) => {
+          try {
+            const { data: sessionData } = await supabase.auth.getSession();
+            const accessToken = sessionData.session?.access_token;
+
+            const verifyRes = await fetch('/api/verify-payment', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+              },
+              body: JSON.stringify({
+                ...response,
+                lines,
+                couponCode,
+                customer: {
+                  name: shipping.name,
+                  email: shipping.email,
+                  phone: profile?.phone || '',
+                },
+                shippingAddress: {
+                  address: shipping.address,
+                  city: shipping.city,
+                  zip: shipping.zip,
+                },
+              }),
+            });
+            const verifyData = await verifyRes.json();
+
+            if (!verifyRes.ok || !verifyData.success) {
+              setOrderError(verifyData.error || 'Payment verification failed. Please contact support.');
+              setPlacing(false);
+              return;
+            }
+
+            setOrderId(verifyData.orderId || null);
+            setStep('done');
+            clearCart();
+          } catch {
+            setOrderError('Payment succeeded but we could not confirm your order. Please contact support.');
+          } finally {
+            setPlacing(false);
+          }
+        },
+        modal: {
+          ondismiss: () => setPlacing(false),
+        },
+      });
+
+      razorpay.open();
+    } catch {
+      setOrderError('Could not start payment. Please check your connection and try again.');
+      setPlacing(false);
+    }
   };
 
   return (
@@ -52,237 +151,70 @@ export default function Checkout() {
         <>
           <h1 className="font-display text-3xl font-bold text-cocoa-700 sm:text-4xl">Checkout</h1>
 
-          <div className="mt-8 flex items-center gap-2 sm:gap-4">
-            {steps.map((s, i) => (
-              <div key={s.id} className="flex flex-1 items-center gap-2 sm:gap-3">
-                <div
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                    i <= currentIndex ? 'bg-cocoa-600 text-cream-100' : 'bg-cocoa-600/10 text-cocoa-400'
-                  }`}
-                >
-                  {i < currentIndex ? <Check className="h-4 w-4" /> : i + 1}
-                </div>
-                <span
-                  className={`hidden text-sm font-semibold sm:inline ${
-                    i <= currentIndex ? 'text-cocoa-700' : 'text-cocoa-400'
-                  }`}
-                >
-                  {s.label}
-                </span>
-                {i < steps.length - 1 && <div className="h-0.5 flex-1 rounded bg-cocoa-600/10" />}
-              </div>
-            ))}
-          </div>
-
           <div className="mt-10 grid gap-10 lg:grid-cols-[1.6fr_1fr]">
-            <AnimatePresence mode="wait">
-              {step === 'shipping' && (
-                <motion.div
-                  key="shipping"
-                  initial={{ opacity: 0, x: 16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -16 }}
-                  className="rounded-3xl bg-white/80 p-6 shadow-soft ring-1 ring-cocoa-600/[0.05] sm:p-8"
+            <motion.div
+              initial={{ opacity: 0, x: 16 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="rounded-3xl bg-white/80 p-6 shadow-soft ring-1 ring-cocoa-600/[0.05] sm:p-8"
+            >
+              <h2 className="mb-5 font-display text-lg font-bold text-cocoa-700">Shipping Details</h2>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handlePlaceOrder();
+                }}
+                className="grid grid-cols-1 gap-4 sm:grid-cols-2"
+              >
+                <input
+                  required
+                  placeholder="Full name"
+                  value={shipping.name}
+                  onChange={(e) => setShipping({ ...shipping, name: e.target.value })}
+                  className="input-field sm:col-span-2"
+                />
+                <input
+                  required
+                  type="email"
+                  placeholder="Email address"
+                  value={shipping.email}
+                  onChange={(e) => setShipping({ ...shipping, email: e.target.value })}
+                  className="input-field sm:col-span-2"
+                />
+                <input
+                  required
+                  placeholder="Street address"
+                  value={shipping.address}
+                  onChange={(e) => setShipping({ ...shipping, address: e.target.value })}
+                  className="input-field sm:col-span-2"
+                />
+                <input
+                  required
+                  placeholder="City"
+                  value={shipping.city}
+                  onChange={(e) => setShipping({ ...shipping, city: e.target.value })}
+                  className="input-field"
+                />
+                <input
+                  required
+                  placeholder="ZIP / Postal code"
+                  value={shipping.zip}
+                  onChange={(e) => setShipping({ ...shipping, zip: e.target.value })}
+                  className="input-field"
+                />
+                {orderError && (
+                  <div className="rounded-xl bg-berry/10 px-4 py-2.5 text-sm font-medium text-berry sm:col-span-2">
+                    {orderError}
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  className="btn-primary sm:col-span-2 mt-2 disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={placing}
                 >
-                  <h2 className="mb-5 font-display text-lg font-bold text-cocoa-700">Shipping Details</h2>
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      setStep('payment');
-                    }}
-                    className="grid grid-cols-1 gap-4 sm:grid-cols-2"
-                  >
-                    <input
-                      required
-                      placeholder="Full name"
-                      value={shipping.name}
-                      onChange={(e) => setShipping({ ...shipping, name: e.target.value })}
-                      className="input-field sm:col-span-2"
-                    />
-                    <input
-                      required
-                      type="email"
-                      placeholder="Email address"
-                      value={shipping.email}
-                      onChange={(e) => setShipping({ ...shipping, email: e.target.value })}
-                      className="input-field sm:col-span-2"
-                    />
-                    <input
-                      required
-                      placeholder="Street address"
-                      value={shipping.address}
-                      onChange={(e) => setShipping({ ...shipping, address: e.target.value })}
-                      className="input-field sm:col-span-2"
-                    />
-                    <input
-                      required
-                      placeholder="City"
-                      value={shipping.city}
-                      onChange={(e) => setShipping({ ...shipping, city: e.target.value })}
-                      className="input-field"
-                    />
-                    <input
-                      required
-                      placeholder="ZIP / Postal code"
-                      value={shipping.zip}
-                      onChange={(e) => setShipping({ ...shipping, zip: e.target.value })}
-                      className="input-field"
-                    />
-                    <button type="submit" className="btn-primary sm:col-span-2 mt-2">
-                      Continue to Payment
-                    </button>
-                  </form>
-                </motion.div>
-              )}
-
-              {step === 'payment' && (
-                <motion.div
-                  key="payment"
-                  initial={{ opacity: 0, x: 16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -16 }}
-                  className="rounded-3xl bg-white/80 p-6 shadow-soft ring-1 ring-cocoa-600/[0.05] sm:p-8"
-                >
-                  <h2 className="mb-5 font-display text-lg font-bold text-cocoa-700">Payment Method</h2>
-
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    {[
-                      { id: 'card', label: 'Card', icon: CreditCard },
-                      { id: 'upi', label: 'UPI', icon: Smartphone },
-                      { id: 'netbanking', label: 'Net Banking', icon: Landmark },
-                      { id: 'wallet', label: 'Wallet', icon: Wallet },
-                    ].map((m) => (
-                      <button
-                        key={m.id}
-                        onClick={() => setMethod(m.id as PaymentMethod)}
-                        className={`flex flex-col items-center gap-2 rounded-2xl border-2 px-3 py-4 text-xs font-semibold transition-colors ${
-                          method === m.id
-                            ? 'border-cocoa-600 bg-cocoa-600/[0.06] text-cocoa-700'
-                            : 'border-transparent bg-cocoa-600/[0.04] text-cocoa-400 hover:bg-cocoa-600/[0.07]'
-                        }`}
-                      >
-                        <m.icon className="h-5 w-5" />
-                        {m.label}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 flex gap-3">
-                    <button
-                      onClick={() => setMethod('applepay')}
-                      className={`flex flex-1 items-center justify-center gap-2 rounded-2xl py-3 text-sm font-semibold transition-colors ${
-                        method === 'applepay' ? 'bg-black text-white' : 'bg-cocoa-600/[0.06] text-cocoa-600 hover:bg-black hover:text-white'
-                      }`}
-                    >
-                       Pay
-                    </button>
-                    <button
-                      onClick={() => setMethod('googlepay')}
-                      className={`flex flex-1 items-center justify-center gap-2 rounded-2xl py-3 text-sm font-semibold transition-colors ${
-                        method === 'googlepay'
-                          ? 'bg-cocoa-700 text-cream-100'
-                          : 'bg-cocoa-600/[0.06] text-cocoa-600 hover:bg-cocoa-700 hover:text-cream-100'
-                      }`}
-                    >
-                      G Pay
-                    </button>
-                  </div>
-
-                  <div className="mt-6 rounded-2xl bg-cream-200/60 p-5">
-                    {method === 'card' && (
-                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        <input placeholder="Card number" className="input-field sm:col-span-2" />
-                        <input placeholder="MM / YY" className="input-field" />
-                        <input placeholder="CVC" className="input-field" />
-                        <input placeholder="Name on card" className="input-field sm:col-span-2" />
-                      </div>
-                    )}
-                    {method === 'upi' && (
-                      <input placeholder="yourname@upi" className="input-field w-full" />
-                    )}
-                    {method === 'netbanking' && (
-                      <select className="input-field w-full">
-                        <option>Select your bank</option>
-                        <option>HDFC Bank</option>
-                        <option>ICICI Bank</option>
-                        <option>State Bank</option>
-                        <option>Chase</option>
-                        <option>Bank of America</option>
-                      </select>
-                    )}
-                    {method === 'wallet' && (
-                      <select className="input-field w-full">
-                        <option>Select wallet</option>
-                        <option>PayPal</option>
-                        <option>Paytm</option>
-                        <option>Amazon Pay</option>
-                      </select>
-                    )}
-                    {(method === 'applepay' || method === 'googlepay') && (
-                      <p className="text-center text-sm text-cocoa-500">
-                        You'll confirm this payment via your device's secure {method === 'applepay' ? 'Apple' : 'Google'} Pay sheet.
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="mt-6 flex gap-3">
-                    <button onClick={() => setStep('shipping')} className="btn-secondary flex-1">
-                      Back
-                    </button>
-                    <button onClick={() => setStep('review')} className="btn-primary flex-1">
-                      Review Order
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-
-              {step === 'review' && (
-                <motion.div
-                  key="review"
-                  initial={{ opacity: 0, x: 16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -16 }}
-                  className="rounded-3xl bg-white/80 p-6 shadow-soft ring-1 ring-cocoa-600/[0.05] sm:p-8"
-                >
-                  <h2 className="mb-5 font-display text-lg font-bold text-cocoa-700">Review & Place Order</h2>
-                  <div className="space-y-4 text-sm">
-                    <div>
-                      <p className="font-semibold text-cocoa-600">Shipping to</p>
-                      <p className="text-cocoa-500">
-                        {shipping.name || 'Jane Doe'}, {shipping.address || '123 Main St'}, {shipping.city || 'Springfield'}{' '}
-                        {shipping.zip}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-cocoa-600">Payment method</p>
-                      <p className="capitalize text-cocoa-500">{method.replace('pay', ' Pay')}</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-cocoa-600">Items</p>
-                      <ul className="mt-1 space-y-1 text-cocoa-500">
-                        {lines.map((l) => {
-                          const p = findProduct(l.productId);
-                          return p ? (
-                            <li key={l.productId} className="flex justify-between">
-                              <span>{p.name} × {l.qty}</span>
-                              <span>₹{Math.round(p.price * l.qty)}</span>
-                            </li>
-                          ) : null;
-                        })}
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="mt-6 flex gap-3">
-                    <button onClick={() => setStep('payment')} className="btn-secondary flex-1">
-                      Back
-                    </button>
-                    <button onClick={handlePlaceOrder} className="btn-primary flex-1">
-                      Place Order · ₹{Math.round(grandTotal)}
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  {placing ? 'Processing…' : `Place Order · ₹${Math.round(grandTotal)}`}
+                </button>
+              </form>
+            </motion.div>
 
             <div className="h-fit rounded-3xl bg-white/80 p-6 shadow-soft ring-1 ring-cocoa-600/[0.05]">
               <h2 className="font-display text-lg font-bold text-cocoa-700">Order Summary</h2>
@@ -340,6 +272,12 @@ export default function Checkout() {
           <p className="text-cocoa-500">
             Thanks{shipping.name ? `, ${shipping.name}` : ''} — your Bites are on their way. A confirmation email is
             headed to {shipping.email || 'your inbox'}.
+            {orderId && (
+              <>
+                {' '}
+                Your order ID is <span className="font-semibold text-cocoa-700">{orderId}</span>.
+              </>
+            )}
           </p>
           <button onClick={() => navigate('/')} className="btn-primary">
             Back to Home

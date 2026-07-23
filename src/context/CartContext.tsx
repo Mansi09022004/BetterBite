@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useState, type ReactNode } from 'react';
-import { findProduct } from '../data/products';
-import { coupons } from '../data/subscriptionPlans';
+import { useProducts } from './ProductsContext';
+import { useStoreConfig } from './StoreConfigContext';
 
 export interface CartLine {
   productId: string;
@@ -83,6 +83,8 @@ function loadPersistedCart(): { lines: CartLine[]; couponCode: string | null } {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { findProduct } = useProducts();
+  const { coupons } = useStoreConfig();
   const [state, dispatch] = useReducer(reducer, undefined, () => ({ lines: loadPersistedCart().lines }));
   const [couponCode, setCouponCode] = useState<string | null>(() => loadPersistedCart().couponCode);
   const [couponError, setCouponError] = useState<string | null>(null);
@@ -98,7 +100,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const product = findProduct(line.productId);
         return sum + (product ? product.price * line.qty : 0);
       }, 0),
-    [state.lines]
+    [state.lines, findProduct]
   );
 
   const itemCount = useMemo(() => state.lines.reduce((n, l) => n + l.qty, 0), [state.lines]);
@@ -107,7 +109,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!couponCode) return 0;
     const rate = coupons[couponCode];
     return rate ? subtotal * rate : 0;
-  }, [couponCode, subtotal]);
+  }, [couponCode, subtotal, coupons]);
 
   const total = Math.max(0, subtotal - discount);
 
