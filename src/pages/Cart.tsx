@@ -4,13 +4,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Minus, Plus, Tag, Trash2, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { findProduct } from '../data/products';
+import { useProducts } from '../context/ProductsContext';
+import { useStoreConfig } from '../context/StoreConfigContext';
 import { PouchMockup } from '../components/illustrations/PouchMockup';
 import { Reveal } from '../components/ui/Reveal';
 
 export default function Cart() {
   const { lines, setQty, removeFromCart, subtotal, discount, total, couponCode, couponError, applyCoupon, removeCoupon } =
     useCart();
+  const { findProduct } = useProducts();
+  const { settings } = useStoreConfig();
   const [code, setCode] = useState('');
   const [shake, setShake] = useState(false);
   const navigate = useNavigate();
@@ -22,7 +25,7 @@ export default function Cart() {
     setTimeout(() => setShake(false), 400);
   };
 
-  const shipping = subtotal > 0 && subtotal < 499 ? 49 : 0;
+  const shipping = subtotal > 0 && subtotal < settings.freeShippingThreshold ? settings.shippingCharge : 0;
   const grandTotal = total + shipping;
 
   return (

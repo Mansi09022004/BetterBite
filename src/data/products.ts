@@ -1,4 +1,4 @@
-import { subscriptionPlans } from './subscriptionPlans';
+import { subscriptionPlans } from './subscriptionPlans.js';
 
 export type FlavorTheme = 'chocolate' | 'cookies' | 'peanut' | 'coffee' | 'strawberry';
 

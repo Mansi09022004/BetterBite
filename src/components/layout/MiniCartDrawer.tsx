@@ -2,11 +2,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Minus, Plus, X } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
-import { findProduct } from '../../data/products';
+import { useProducts } from '../../context/ProductsContext';
 import { PouchMockup } from '../illustrations/PouchMockup';
 
 export function MiniCartDrawer() {
   const { lines, isDrawerOpen, closeDrawer, setQty, subtotal, removeFromCart } = useCart();
+  const { findProduct } = useProducts();
 
   return (
     <AnimatePresence>

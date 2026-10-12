@@ -1,13 +1,13 @@
 import { Instagram } from 'lucide-react';
-import { products } from '../../data/products';
 import { themeColors } from '../../data/products';
+import { useProducts } from '../../context/ProductsContext';
 import { BiteMockup } from '../illustrations/BiteMockup';
 import { SectionHeading } from '../ui/SectionHeading';
 import { Reveal } from '../ui/Reveal';
 
-const gallery = [...products, ...products.slice(0, 3)];
-
 export function InstagramGallery() {
+  const { products } = useProducts();
+  const gallery = [...products, ...products.slice(0, 3)];
   return (
     <section className="container-page py-14 sm:py-28">
       <SectionHeading eyebrow="@betterbite" title="Join the community" subtitle="Tag us in your sweet-escape moments for a chance to be featured." />

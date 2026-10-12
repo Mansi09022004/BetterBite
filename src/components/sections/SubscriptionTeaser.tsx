@@ -2,9 +2,10 @@ import { Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { Reveal } from '../ui/Reveal';
 import { BiteMockup } from '../illustrations/BiteMockup';
-import { products } from '../../data/products';
+import { useProducts } from '../../context/ProductsContext';
 
 export function SubscriptionTeaser() {
+  const { products } = useProducts();
   return (
     <section className="container-page py-14 sm:py-28">
       <div className="relative overflow-hidden rounded-[2rem] bg-cocoa-600 px-5 py-10 sm:rounded-[2.5rem] sm:px-12 sm:py-20">
