@@ -9,6 +9,7 @@ import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { PromoBar } from './components/layout/PromoBar';
 import { MiniCartDrawer } from './components/layout/MiniCartDrawer';
+import { RagChatWidget } from './components/chatbot/RagChatWidget';
 import { RequireAuth } from './components/auth/RequireAuth';
 import { RequireAdmin } from './components/auth/RequireAdmin';
 import { AdminLayout } from './components/admin/AdminLayout';
@@ -117,6 +118,7 @@ function AppRoutes() {
       </main>
       {!isAdminRoute && <Footer />}
       {!isAdminRoute && <MiniCartDrawer />}
+      {!isAdminRoute && <RagChatWidget />}
     </>
   );
 }
