@@ -10,7 +10,7 @@ export function Hero() {
   const { ref, display } = useCountUp(50, 1.4);
 
   return (
-    <section className="relative overflow-hidden pb-14 pt-8 sm:pb-20 sm:pt-16">
+    <section className="hero-compact relative overflow-hidden pb-14 pt-8 sm:pb-20 sm:pt-16">
       <BlobBackground variant="gold" className="-left-40 -top-32 h-[520px] w-[520px]" />
       <BlobBackground variant="beige" className="-right-32 top-40 h-[420px] w-[420px]" />
 
@@ -30,7 +30,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-cocoa-700 sm:text-5xl lg:text-6xl"
+            className="hero-title mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-cocoa-700 sm:text-5xl lg:text-6xl"
           >
             Your{' '}
             <span ref={ref as never} className="relative inline-block text-gold-700">
@@ -44,7 +44,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="mt-6 max-w-md text-lg leading-relaxed text-cocoa-500"
+            className="hero-copy mt-6 max-w-md text-lg leading-relaxed text-cocoa-500"
           >
             Protein. Pleasure. No guilt. Mini protein bites made for the moment after
             lunch or dinner when you want something sweet — without eating an entire
@@ -55,7 +55,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="mt-8 flex flex-wrap gap-4"
+            className="hero-actions mt-8 flex flex-wrap gap-4"
           >
             <a href="#shop">
               <button className="btn-primary">Shop Now</button>
@@ -69,7 +69,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
-            className="mt-10 grid max-w-md grid-cols-3 gap-3"
+            className="hero-stats mt-10 grid max-w-md grid-cols-3 gap-3"
           >
             <StatPill label="Calories" value="50" />
             <StatPill label="Protein" value="5g" />

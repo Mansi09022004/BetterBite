@@ -58,3 +58,28 @@ body {
     @apply rounded-xl border border-cocoa-600/15 bg-white px-4 py-2.5 text-sm text-cocoa-700 placeholder:text-cocoa-400 focus:border-gold-500 focus:outline-none;
   }
 }
+
+/* Short desktop screens (e.g. laptops with display scaling): tighten the hero's
+   vertical spacing so the whole first screen fits without scrolling. Taller
+   screens keep the original spacing; mobile is untouched (min-width: 1024px). */
+@media (min-width: 1024px) and (max-height: 780px) {
+  section.hero-compact {
+    padding-top: 1rem;
+    padding-bottom: 1.25rem;
+  }
+  .hero-compact .hero-title {
+    margin-top: 0.75rem;
+    font-size: 2.6rem;
+  }
+  .hero-compact .hero-copy {
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .hero-compact .hero-actions {
+    margin-top: 1rem;
+  }
+  .hero-compact .hero-stats {
+    margin-top: 1rem;
+  }
+}
