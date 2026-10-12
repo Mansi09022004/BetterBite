@@ -16,6 +16,9 @@ const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 const EMBEDDING_MODEL = 'gemini-embedding-001';
 const EMBEDDING_DIMENSIONS = 768; // must match the `vector(768)` column in rag/schema.sql
 const GENERATION_MODEL = 'gemini-2.5-flash';
+// Tried in order only if the main model is overloaded, rate-limited or unavailable.
+const FALLBACK_GENERATION_MODELS = ['gemini-flash-lite-latest', 'gemini-3.5-flash-lite'];
+const GENERATE_TIMEOUT_MS = 4500; // keeps the whole chain inside Vercel's function time limit
 
 export type EmbeddingTaskType = 'RETRIEVAL_DOCUMENT' | 'RETRIEVAL_QUERY';
 
@@ -30,6 +33,18 @@ export type EmbeddingTaskType = 'RETRIEVAL_DOCUMENT' | 'RETRIEVAL_QUERY';
  * RETRIEVAL_QUERY.
  */
 export async function embedText(text: string, taskType: EmbeddingTaskType): Promise<number[]> {
+  try {
+    return await embedOnce(text, taskType);
+  } catch (err) {
+    // one quick retry for transient Gemini overload (429/500/503)
+    const status = (err as { status?: number }).status;
+    if (!status || !RETRYABLE_STATUSES.includes(status)) throw err;
+    await new Promise((r) => setTimeout(r, 400));
+    return embedOnce(text, taskType);
+  }
+}
+
+async function embedOnce(text: string, taskType: EmbeddingTaskType): Promise<number[]> {
   const res = await fetch(`${API_BASE}/models/${EMBEDDING_MODEL}:embedContent?key=${apiKey}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -41,28 +56,61 @@ export async function embedText(text: string, taskType: EmbeddingTaskType): Prom
   });
 
   if (!res.ok) {
-    throw new Error(`Gemini embedContent failed (${res.status}): ${await res.text()}`);
+    throw Object.assign(new Error(`Gemini embedContent failed (${res.status}): ${await res.text()}`), {
+      status: res.status,
+    });
   }
 
   const data = await res.json();
   return data.embedding.values as number[];
 }
 
-/** Sends a fully-constructed RAG prompt (context + question) to the LLM and returns its answer text. */
-export async function generateAnswer(prompt: string): Promise<string> {
-  const res = await fetch(`${API_BASE}/models/${GENERATION_MODEL}:generateContent?key=${apiKey}`, {
+/** One generateContent call. Throws an error carrying the HTTP status so callers can decide to retry. */
+async function callGenerate(model: string, prompt: string): Promise<string> {
+  const res = await fetch(`${API_BASE}/models/${model}:generateContent?key=${apiKey}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{ parts: [{ text: prompt }] }],
     }),
+    signal: AbortSignal.timeout(GENERATE_TIMEOUT_MS),
   });
 
   if (!res.ok) {
-    throw new Error(`Gemini generateContent failed (${res.status}): ${await res.text()}`);
+    throw Object.assign(new Error(`Gemini generateContent failed (${res.status}): ${await res.text()}`), {
+      status: res.status,
+    });
   }
 
   const data = await res.json();
   const text = data.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text ?? '').join('') ?? '';
   return text.trim();
+}
+
+const RETRYABLE_STATUSES = [404, 429, 500, 503];
+
+/**
+ * Sends a fully-constructed RAG prompt (context + question) to the LLM and
+ * returns its answer text.
+ *
+ * Gemini sometimes answers 503 "high demand" or 429 (free-tier rate limit)
+ * for a few seconds. Instead of showing the user an error, move on to the
+ * next model in the chain, which is rarely busy at the same moment. A request
+ * that hangs is cut off by the timeout and treated the same way.
+ */
+export async function generateAnswer(prompt: string): Promise<string> {
+  const models = [GENERATION_MODEL, ...FALLBACK_GENERATION_MODELS];
+  let lastError: unknown;
+
+  for (const model of models) {
+    try {
+      return await callGenerate(model, prompt);
+    } catch (err) {
+      lastError = err;
+      const status = (err as { status?: number }).status;
+      const isTimeout = (err as { name?: string }).name === 'TimeoutError';
+      if (!isTimeout && !(status && RETRYABLE_STATUSES.includes(status))) throw err;
+    }
+  }
+  throw lastError;
 }
