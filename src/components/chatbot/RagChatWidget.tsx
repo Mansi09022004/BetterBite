@@ -139,7 +139,7 @@ export function RagChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 340, damping: 30 }}
-            className="fixed bottom-24 right-5 z-40 flex h-[70vh] max-h-[560px] w-[380px] max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-xl2 border border-cocoa-600/10 bg-cream-100 shadow-lift"
+            className="fixed bottom-24 right-5 z-40 flex h-[calc(100dvh-14rem)] min-h-[280px] max-h-[560px] w-[380px] max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-xl2 border border-cocoa-600/10 bg-cream-100 shadow-lift"
           >
             <div className="flex items-center gap-2 bg-cocoa-600 px-4 py-3 text-cream-100">
               <Sparkles className="h-4 w-4 text-gold-300" />
